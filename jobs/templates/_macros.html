@@ -2,7 +2,10 @@
 <div class="card adjust-height">
   <header class="card-header">
     <p class="card-header-title">
-      <a href="">{{ job['title'] }}</a>
+      <!-- This will display the job title.
+      In case it is called from the URL for a specific job,
+      the id will be taken from the path variable directly -->
+      <a href="{{ url_for('job', job_id=job['id']) }}">{{ job['title'] }}</a>
     </p>
   </header>
   <div class="card-content">

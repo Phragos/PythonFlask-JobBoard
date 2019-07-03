@@ -42,3 +42,9 @@ def jobs():
     jobs = execute_sql('SELECT job.id, job.title, job.description, job.salary, employer.id as employer_id, employer.name as employer_name FROM job JOIN employer ON employer.id = job.employer_id')
     # This calls the template that will be returned, and passes the parameter for the jobs to be generated
     return render_template('index.html', jobs = jobs)
+
+# This decorator specifies the path and includes a path variable job_id that can be used in the function
+@app.route('/job/<job_id>')
+def job(job_id):
+    job = execute_sql('SELECT job.id, job.title, job.description, job.salary, employer.id as employer_id, employer.name as employer_name FROM job JOIN employer ON employer.id = job.employer_id WHERE job.id = ?', [job_id], single=True)
+    return render_template('job.html', job = job)
