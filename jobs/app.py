@@ -34,7 +34,11 @@ def close_connection(exception):
     if connection is not None:
         connection.close()
 
+# The decorator are to specify which path requests this function
 @app.route('/')
 @app.route('/jobs')
 def jobs():
-    return render_template('index.html')
+    # Runs a SQL query on tables job and employer and assigns the result to jobs
+    jobs = execute_sql('SELECT job.id, job.title, job.description, job.salary, employer.id as employer_id, employer.name as employer_name FROM job JOIN employer ON employer.id = job.employer_id')
+    # This calls the template that will be returned, and passes the parameter for the jobs to be generated
+    return render_template('index.html', jobs = jobs)
