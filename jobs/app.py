@@ -8,16 +8,16 @@ PATH='db/jobs.sqlite'
 app = Flask(__name__)
 
 # This establishes a connection with the SQlite DB
-def open_connection():
+def open_connection(db_path):
     connection = getattr(g, '_connection', None)
     if connection == None:
-        connection = g._connection = sqlite3.connect(PATH)
+        connection = g._connection = sqlite3.connect(db_path)
     connection.row_factory = sqlite3.Row
     return connection
 
 # Creates a new DB entry
 def execute_sql(sql, values=(), commit=False, single=False):
-        connection = open_connection()
+        connection = open_connection(PATH)
         cursor = connection.execute(sql, values)
         if commit == True:
             results = connection.commit()
@@ -57,8 +57,8 @@ def employer(employer_id):
     reviews = execute_sql('SELECT review, rating, title, date, status FROM review JOIN employer ON employer.id = review.employer_id WHERE employer.id = ?', [employer_id])
     return render_template('employer.html', employer = employer, jobs = jobs, reviews = reviews)
 
-@app.route('/employer/<employer_id>/review', methods = {'GET', 'POST'})
-def review(employer_id):
+@app.route('/employer/<employer_id>/review_new', methods = {'GET', 'POST', 'DELETE'})
+def review_new(employer_id):
     # This is to handle the POST request (to enter a new review for the employer)
     if request.method == 'POST':
         review = request.form['review']
@@ -72,5 +72,22 @@ def review(employer_id):
 
         return redirect( url_for('employer', employer_id = employer_id) )
 
+    # Self improvised part
+    # else if request.method == 'DELETE':
+
     # This will show all reviews for one employer
-    return render_template('review.html', employer_id = employer_id)
+    return render_template('review_new.html', employer_id = employer_id)
+
+# Self improvised functions
+@app.route('/employer/<employer_id>/job_new', methods = {'GET', 'POST', 'DELETE'})
+def job_new(employer_id):
+    if request.method == 'POST':
+        title = request.form['title']
+        salary = request.form['salary']
+        description = request.form['description']
+
+        execute_sql('INSERT INTO job (title, description, salary, employer_id) VALUES (?, ?, ?, ?)', (title, description, salary, employer_id), commit = True)
+
+        return redirect( url_for('employer', employer_id =  employer_id) )
+
+    return render_template('job_new.html', employer_id = employer_id)

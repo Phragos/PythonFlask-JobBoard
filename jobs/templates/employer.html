@@ -8,6 +8,11 @@
   </div>
   <h2>Jobs</h2>
   {{ show_jobs(jobs) }}
+  <div class="columns">
+    <div class="column">
+      <a class="button is-info is-pulled-right" href="{{ url_for('job_new', employer_id = employer['id']) }}">Post Job</a>
+    </div>
+  </div>
 
   <h2>Reviews</h2>
     {% for review in reviews %}
@@ -33,7 +38,7 @@
     {% endfor %}
   <div class="columns">
     <div class="column">
-      <a class="button is-info is-pulled-right" href="{{ url_for('review', employer_id = employer['id']) }}">Create Review</a>
+      <a class="button is-info is-pulled-right" href="{{ url_for('review_new', employer_id = employer['id']) }}">Create Review</a>
     </div>
   </div>
 {% endblock %}
